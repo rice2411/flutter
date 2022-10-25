@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rice_app/product/provider/Category.dart';
 import 'package:flutter_rice_app/provider/News.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_rice_app/provider/News.dart';
 
-class sliderCategory extends StatefulWidget {
-  final NewsProvider provider;
+class SliderCategory extends StatefulWidget {
+  SliderCategory({
+    required this.category,
+    required this.setCategory,
+  });
+
+  late final String category;
   final void Function(String cate) setCategory;
 
-  sliderCategory({
-    Key? key,
-    required this.provider,
-    required this.setCategory,
-  }) : super(key: key);
-
   @override
-  State<sliderCategory> createState() => _sliderCategoryState();
+  State<SliderCategory> createState() => _SliderCategoryState();
 }
 
-class _sliderCategoryState extends State<sliderCategory> {
-  List<String> categories = [
-    "Apple",
-    "Tesla",
-  ];
-  String categorySelected = "";
+class _SliderCategoryState extends State<SliderCategory> {
   @override
   Widget build(BuildContext context) {
+    var categoryProvider = Provider.of<CategoryProvider>(context);
+    categoryProvider.getList();
+
     return Container(
       width: double.infinity,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(children: [
-          ...categories.map((e) {
+          ...categoryProvider.list.map((e) {
             return TextButton(
               style: ButtonStyle(
                 overlayColor: MaterialStateProperty.all(Colors.transparent),
@@ -38,22 +36,21 @@ class _sliderCategoryState extends State<sliderCategory> {
                     MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(0)),
               ),
               onPressed: () {
-                widget.setCategory(e.toLowerCase());
+                widget.setCategory(e);
               },
               child: Container(
                 margin: EdgeInsets.all(5),
                 padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 decoration: BoxDecoration(
-                    color: categorySelected == e ? Colors.white : Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                    border: categorySelected == e
-                        ? Border.all(color: Colors.black)
-                        : Border.all(color: Colors.white)),
+                  color: widget.category == e
+                      ? Color(0xff3E3E70)
+                      : Color(0xfff0f0f5),
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Text(
                   e,
                   style: TextStyle(
-                      color:
-                          categorySelected == e ? Colors.black : Colors.white),
+                      color: widget.category == e ? Colors.white : Colors.grey),
                 ),
               ),
             );
